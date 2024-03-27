@@ -13,13 +13,15 @@ import {
 } from "components/form"
 import { IVerify, verifySchema } from "lib/utils/auth"
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "components/otp-input"
+import { ApiResponse } from "lib/types/response"
+import Loader from "components/loader"
 
 export default function VerifyOtp({
   primaryActionText,
   handleSubmit,
 }: {
   primaryActionText: string
-  handleSubmit: (values: IVerify) => void
+  handleSubmit: (values: IVerify) => Promise<ApiResponse<any>>
 }) {
   const form = useForm<IVerify>({
     resolver: zodResolver(verifySchema),
@@ -28,9 +30,12 @@ export default function VerifyOtp({
     },
   })
 
-  function onSubmit(values: IVerify) {
-    handleSubmit(values)
+  async function onSubmit(values: IVerify) {
+    const { message: error_message } = await handleSubmit(values)
+    if (error_message) form.setError("root", { message: error_message })
   }
+
+  const { isLoading, isSubmitting, errors } = form.formState
 
   return (
     <div>
@@ -66,11 +71,16 @@ export default function VerifyOtp({
               </FormItem>
             )}
           />
-          <div>
-            <Button type="submit" className="uppercase w-full mt-4" size="lg">
-              {primaryActionText}
-            </Button>
-          </div>
+          {errors.root?.message && (
+            <p className=" text-destructive">
+              {errors.root?.message}
+            </p>
+          )}
+
+          <Button type="submit" className="uppercase w-full mt-4" size="lg" disabled={isLoading || isSubmitting}>
+            {primaryActionText} {(isLoading || isSubmitting) && <Loader />}
+          </Button>
+
           {/* <div className="border-b h-1"></div>
           <div className=" text-center">
             Don&#39;t have an Account?{" "}

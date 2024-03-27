@@ -1,7 +1,7 @@
 "use server"
 
 import { postRequest } from "lib/network"
-import { ILogin, ISignUp } from "lib/utils/auth"
+import { ILogin, ISignUp, IVerify } from "lib/utils/auth"
 
 export async function login(formValues: ILogin) {
   const { data, message, status, status_code } = await postRequest(
@@ -17,4 +17,9 @@ export async function signup(formValues: ISignUp) {
     formValues
   )
   return { message, data, status }
+}
+
+export async function verify(formValues: IVerify) {
+  const { status, message } = await postRequest("http://localhost:3000/api/verify_email", formValues)
+  return { message, status }
 }

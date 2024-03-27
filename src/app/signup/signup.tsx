@@ -18,6 +18,7 @@ import { Input } from "components/input"
 import { ISignUp, signUpSchema } from "lib/utils/auth"
 import Link from "next/link"
 import { ApiResponse } from "lib/types/response"
+import Loader from "components/loader"
 
 export default function SignUpForm({
   primaryActionText,
@@ -38,6 +39,7 @@ export default function SignUpForm({
     const { message: error_message } = await handleSubmit(values)
     if (error_message) form.setError("root", { message: error_message })
   }
+  const { isLoading, isSubmitting, errors } = form.formState
 
   return (
     <div>
@@ -96,14 +98,14 @@ export default function SignUpForm({
               </FormItem>
             )}
           />
-          {form.formState.errors.root?.message && (
+          {errors.root?.message && (
             <p className=" text-destructive">
-              {form.formState.errors.root?.message}
+              {errors.root?.message}
             </p>
           )}
 
-          <Button type="submit" className="uppercase w-full mt-4" size="lg">
-            {primaryActionText}
+          <Button type="submit" className="uppercase w-full mt-4" size="lg" disabled={isLoading || isSubmitting}>
+            {primaryActionText} {(isLoading || isSubmitting) && <Loader />}
           </Button>
 
           <div className="border-b h-1"></div>
