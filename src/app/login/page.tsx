@@ -8,12 +8,9 @@ import { redirect } from "next/navigation"
 export default function Login() {
   async function handleLogin(values: ILogin) {
     "use server"
-    const { status, message, status_code } = await login(values)
-    console.log("status_code", status_code)
-    console.log("status", status)
+    const { status, message } = await login(values)
     if (status === Status.Success) redirect("/categories")
     else if (status === Status.OtpPending) redirect("/verify")
-
     return {
       status,
       message,

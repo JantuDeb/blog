@@ -36,7 +36,8 @@ export default function SignUpForm({
   })
 
   async function onSubmit(values: ISignUp) {
-    const { message: error_message } = await handleSubmit(values)
+    const data = await handleSubmit(values)
+    const { message: error_message } = data || {}
     if (error_message) form.setError("root", { message: error_message })
   }
   const { isLoading, isSubmitting, errors } = form.formState

@@ -9,4 +9,5 @@ export type ApiResponse<T> = {
   message?: string
   data?: T
   status_code?: number
+  cookie?:string
 }
