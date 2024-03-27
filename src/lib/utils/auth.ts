@@ -12,7 +12,7 @@ export const signUpSchema = z.object({
   }),
 })
 
-export type SignUp = z.infer<typeof signUpSchema>
+export type ISignUp = z.infer<typeof signUpSchema>
 
 export const loginSchema = z.object({
   //   name: z.string().min(3, {
@@ -26,10 +26,10 @@ export const loginSchema = z.object({
   }),
 })
 
-export type Login = z.infer<typeof loginSchema>
+export type ILogin = z.infer<typeof loginSchema>
 
 export const verifySchema = z.object({
   code: z.string().length(8, "In valid code"),
 })
 
-export type Verify = z.infer<typeof verifySchema>
+export type IVerify = z.infer<typeof verifySchema>

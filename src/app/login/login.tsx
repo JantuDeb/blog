@@ -2,30 +2,31 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 
 import { Button } from "components/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "components/form"
 import { Input } from "components/input"
-import { Login, SignUp, loginSchema } from "lib/utils/auth"
+import { ILogin, loginSchema } from "lib/utils/auth"
 import Link from "next/link"
+import { ApiResponse } from "lib/types/response"
+import { CircleIcon } from "@radix-ui/react-icons"
+import Loader from "components/loader"
 
 export default function LoginForm({
   primaryActionText,
   handleSubmit,
 }: {
   primaryActionText: string
-  handleSubmit: (values: Login) => void
+  handleSubmit: (values: ILogin) => Promise<ApiResponse<any>>
 }) {
-  const form = useForm<Login>({
+  const form = useForm<ILogin>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
@@ -33,9 +34,12 @@ export default function LoginForm({
     },
   })
 
-  function onSubmit(values: Login) {
-    handleSubmit(values)
+  async function onSubmit(values: ILogin) {
+    const { message: error_message } = await handleSubmit(values)
+    if (error_message) form.setError("root", { message: error_message })
   }
+
+  const { isLoading, isSubmitting } = form.formState
 
   return (
     <div>
@@ -78,11 +82,19 @@ export default function LoginForm({
               </FormItem>
             )}
           />
-          <div>
-            <Button type="submit" className="uppercase w-full mt-4" size="lg">
-              {primaryActionText}
-            </Button>
-          </div>
+          {form.formState.errors.root?.message && (
+            <p className=" text-destructive">
+              {form.formState.errors.root?.message}
+            </p>
+          )}
+          <Button
+            type="submit"
+            className="uppercase w-full mt-4"
+            size="lg"
+            disabled={isLoading || isSubmitting}>
+            {primaryActionText} {(isLoading || isSubmitting) && <Loader />}
+          </Button>
+
           <div className="border-b h-1"></div>
           <div className=" text-center">
             Don&#39;t have an Account?{" "}

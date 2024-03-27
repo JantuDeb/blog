@@ -15,17 +15,18 @@ import {
   FormMessage,
 } from "components/form"
 import { Input } from "components/input"
-import { SignUp, signUpSchema } from "lib/utils/auth"
+import { ISignUp, signUpSchema } from "lib/utils/auth"
 import Link from "next/link"
+import { ApiResponse } from "lib/types/response"
 
 export default function SignUpForm({
   primaryActionText,
   handleSubmit,
 }: {
   primaryActionText: string
-  handleSubmit: (values: SignUp) => void
+  handleSubmit: (values: ISignUp) => Promise<ApiResponse<any>>
 }) {
-  const form = useForm<SignUp>({
+  const form = useForm<ISignUp>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
       email: "",
@@ -33,8 +34,9 @@ export default function SignUpForm({
     },
   })
 
-  function onSubmit(values: SignUp) {
-    handleSubmit(values)
+  async function onSubmit(values: ISignUp) {
+    const { message: error_message } = await handleSubmit(values)
+    if (error_message) form.setError("root", { message: error_message })
   }
 
   return (
@@ -94,6 +96,11 @@ export default function SignUpForm({
               </FormItem>
             )}
           />
+          {form.formState.errors.root?.message && (
+            <p className=" text-destructive">
+              {form.formState.errors.root?.message}
+            </p>
+          )}
 
           <Button type="submit" className="uppercase w-full mt-4" size="lg">
             {primaryActionText}

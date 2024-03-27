@@ -1,11 +1,11 @@
 generator client {
   provider = "prisma-client-js"
+  engineType = "binary"
 }
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_DATABASE_URL")
+  url       = env("DIRECT_DATABASE_URL")
 }
 
 model User {
@@ -13,6 +13,7 @@ model User {
   email           String         @unique
   name            String
   password        String
+  email_verified  Boolean        @default(false)
   user_categories  UserCategory[]
 
   @@map("users")

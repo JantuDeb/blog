@@ -1,3 +1,4 @@
+"use client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
@@ -10,7 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "components/form"
-import { Verify, verifySchema } from "lib/utils/auth"
+import { IVerify, verifySchema } from "lib/utils/auth"
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "components/otp-input"
 
 export default function VerifyOtp({
@@ -18,16 +19,16 @@ export default function VerifyOtp({
   handleSubmit,
 }: {
   primaryActionText: string
-  handleSubmit: (values: Verify) => void
+  handleSubmit: (values: IVerify) => void
 }) {
-  const form = useForm<Verify>({
+  const form = useForm<IVerify>({
     resolver: zodResolver(verifySchema),
     defaultValues: {
       code: "",
     },
   })
 
-  function onSubmit(values: Verify) {
+  function onSubmit(values: IVerify) {
     handleSubmit(values)
   }
 

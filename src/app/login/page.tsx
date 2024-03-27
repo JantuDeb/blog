@@ -1,20 +1,29 @@
 import { Card } from "components/card"
-import SignUpForm from "./login"
+import LoginForm from "./login"
+import { ILogin } from "lib/utils/auth"
+import { login } from "../signup/actions"
+import { Status } from "lib/types/response"
+import { redirect } from "next/navigation"
 
-export default function SignUp() {
+export default function Login() {
+  async function handleLogin(values: ILogin) {
+    "use server"
+    const { status, message, status_code } = await login(values)
+    console.log("status_code", status_code)
+    console.log("status", status)
+    if (status === Status.Success) redirect("/categories")
+    else if (status === Status.OtpPending) redirect("/verify")
+
+    return {
+      status,
+      message,
+    }
+  }
+
   return (
     <main className="flex flex-col items-center justify-between h-full py-6">
       <Card className="max-w-md w-full p-8">
-        <SignUpForm
-          primaryActionText="Create Account"
-          handleSubmit={async function (values: {
-            email: string
-            password: string
-          }) {
-            "use server"
-            console.log(values)
-          }}
-        />
+        <LoginForm primaryActionText="LOGIN" handleSubmit={handleLogin} />
       </Card>
     </main>
   )
